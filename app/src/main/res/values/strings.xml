@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Login App</string>
+    <string name="ok">OK</string>
+    <string name="permission_rationale">"Contacts permissions are needed to Login App."</string>
+    <string name="message_permission_disabled">You have disabled the permissions permanently,
+        To enable the permissions please go to Settings -> Permissions and enable the required Permissions,
+        pressing OK you will be navigated to Settings screen</string>
+    <string name="cancel">Cancel</string>
+</resources>
