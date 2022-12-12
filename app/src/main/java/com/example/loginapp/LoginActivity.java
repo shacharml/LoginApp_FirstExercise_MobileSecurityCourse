@@ -14,6 +14,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -74,7 +75,6 @@ public class LoginActivity extends AppCompatActivity implements SensorEventListe
                 login.setVisibility(View.INVISIBLE);
                 loading.setVisibility(View.VISIBLE);
                 Log.d("pttt", "password: " + password.getText().toString());
-
                 if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)
                     checkPassword(password.getText().toString());
             }
@@ -132,8 +132,7 @@ public class LoginActivity extends AppCompatActivity implements SensorEventListe
         readContactsAndCheck();
 
         if (isExist) {
-            startActivity(new Intent(LoginActivity.this, AfterLoginActivity.class));
-            finish();
+            checkAirMode();
         } else {
             info.setText("The Login incorrect (no Exist Contacts)");
             info.setVisibility(View.VISIBLE);
@@ -141,6 +140,21 @@ public class LoginActivity extends AppCompatActivity implements SensorEventListe
             login.setVisibility(View.VISIBLE);
         }
     }
+
+    private void checkAirMode() {
+
+        if(Settings.System.getInt(getApplicationContext().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0){
+            startActivity(new Intent(LoginActivity.this, AfterLoginActivity.class));
+            finish();
+        }
+        else {
+            info.setText("The Login incorrect (The fly mode is off)");
+            info.setVisibility(View.VISIBLE);
+            loading.setVisibility(View.INVISIBLE);
+            login.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private void requestPermissionContacts() {
         //request Permission to contact
@@ -267,10 +281,14 @@ public class LoginActivity extends AppCompatActivity implements SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-            //More then 0 -> object is far
-            //Less then 0 -> object is near
-            proxiFlout = sensorEvent.values[0];
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+            if (sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                //More then 0 -> object is far
+                //Less then 0 -> object is near
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+                    proxiFlout = sensorEvent.values[0];
+                }
+            }
         }
     }
 
